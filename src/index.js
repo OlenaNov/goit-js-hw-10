@@ -23,12 +23,21 @@ function onInputSearchBox(e) {
 function fetchCountries(name) {
     const BASE_URL = `https://restcountries.com/v3.1/name/${name}?fields=name,capital,population,flags,languages`;
     fetch(BASE_URL)
-    .then(data => data.json())
+    .then(data => {
+            if(!data.ok) {
+            countrysList.innerHTML = '';
+            throw new Error(Notify.failure('Oops, there is no country with that name'));
+        };
+
+
+        return data.json();
+    })
     .then(contryDatas => {
         if(contryDatas.length > 10) {
             Notify.info('Too many matches found. Please enter a more specific name.');
             return;
         };
+
 
         makeMarkupCountries(contryDatas);
 console.log(contryDatas);
@@ -57,7 +66,7 @@ function makeMarkupCountry(arr) {
         <h2>${official}</h2>
         <p>Capital: <span>${capital}</span></p>
         <p>Population: <span>${population}</span></p>
-        <p>Languages: <span>${languages}</span></p>
+        <p>Languages: <span>${Object.values(languages)}</span></p>
             </li>`);
 
         countrysList.innerHTML = markupCountry.join('');
