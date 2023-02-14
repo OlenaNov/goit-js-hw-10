@@ -1,11 +1,12 @@
 
 import './css/styles.css';
-import fetchCountries from './fetchCountries';
+import API from './fetchCountries';
 import debounce from 'lodash.debounce';
 
 refs = {  
     inputSearchBox: document.querySelector('#search-box'),
     countrysList: document.querySelector('.country-list'),
+    countryInfo: document.querySelector('.country-info'),
 };
 
 const DEBOUNCE_DELAY = 300;
@@ -16,11 +17,12 @@ function onInputSearchBox(e) {
     let nameCountryInput = e.target.value.trim();
 
     if(!nameCountryInput) {
-        resertCountrysList();
+        API.resertCountrysList();
+        API.resertCountrysInfo();
         return;
     };
 
-    fetchCountries(nameCountryInput);
+    API.fetchCountries(nameCountryInput);
 };
 
 

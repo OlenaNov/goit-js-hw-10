@@ -1,12 +1,13 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
-export default function fetchCountries(name) {
+function fetchCountries(name) {
     const BASE_URL = `https://restcountries.com/v3.1/name/${name}?fields=name,capital,population,flags,languages`;
     fetch(BASE_URL)
     .then(data => {
 
             if(!data.ok) {
             resertCountrysList();
+            resertCountrysInfo();
             Notify.failure('Oops, there is no country with that name');
             throw new Error('Invalid country name');
         };
@@ -17,14 +18,16 @@ export default function fetchCountries(name) {
 
         if(contryDatas.length > 10) {
             resertCountrysList();
+            resertCountrysInfo();
             Notify.info('Too many matches found. Please enter a more specific name.');
             return;
         };
 
         makeMarkupCountries(contryDatas);
+        resertCountrysInfo();
 
         if(contryDatas.length === 1) {
-            makeMarkupCountry(contryDatas);
+            makeMarkupCountryInfo(contryDatas);
         };
 })
     .catch(err => console.log(err));
@@ -32,28 +35,36 @@ export default function fetchCountries(name) {
 
 
 const resertCountrysList = () => refs.countrysList.innerHTML = '';
-const addMarkup = (markup) => refs.countrysList.innerHTML = markup.join('');
+const resertCountrysInfo = () => refs.countryInfo.innerHTML = '';
+const addMarkupList = (markup) => refs.countrysList.innerHTML = markup.join('');
+const addMarkupInfo = (markup) => refs.countryInfo.innerHTML = markup.join('');
+const addClassForStyle = nameClass => refs.countrysList.classList.add(nameClass);
+const removeClassForStyle = nameClass => refs.countrysList.classList.remove(nameClass);
 
 
 function makeMarkupCountries(arr) {
     const markupCountrys = arr.map(({ name: { official }, flags: { svg } } ) =>
         `<li>
-        <img src="${svg}" alt="${official}" width="30px">
+        <img src="${svg}" alt="${official}" width="100px" height="60px">
         <h2>${official}</h2>
             </li>`);
 
-            addMarkup(markupCountrys);
+            addMarkupList(markupCountrys);
+            removeClassForStyle('country');
+            addClassForStyle('countries');
 };
 
-function makeMarkupCountry(arr) {
-    const markupCountry = arr.map(({ name: { official }, capital, languages, population, flags: { svg } } ) =>
-        `<li>
-        <img src="${svg}" alt="${official}" width="30px">
-        <h2>${official}</h2>
+function makeMarkupCountryInfo(arr) {
+    const markupCountry = arr.map(({ capital, languages, population } ) =>
+        `
         <p>Capital: <span>${capital}</span></p>
         <p>Population: <span>${population}</span></p>
         <p>Languages: <span>${Object.values(languages)}</span></p>
-            </li>`);
+        `);
 
-            addMarkup(markupCountry);
+            addMarkupInfo(markupCountry);
+            removeClassForStyle('countries');
+            addClassForStyle('country');
 };
+
+export default { fetchCountries, resertCountrysList, resertCountrysInfo };
