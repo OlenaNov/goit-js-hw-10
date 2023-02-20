@@ -2,12 +2,8 @@
 import './css/styles.css';
 import API from './fetchCountries';
 import debounce from 'lodash.debounce';
+import refs from './refs';
 
-refs = {  
-    inputSearchBox: document.querySelector('#search-box'),
-    countrysList: document.querySelector('.country-list'),
-    countryInfo: document.querySelector('.country-info'),
-};
 
 const DEBOUNCE_DELAY = 300;
 

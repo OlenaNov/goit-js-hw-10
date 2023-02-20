@@ -1,18 +1,22 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import refs from './refs';
+import markupCountryName from './templates/country-card.hbs';
+import markupCountryInfo from './templates/country-info.hbs';
+
 
 function fetchCountries(name) {
     const BASE_URL = `https://restcountries.com/v3.1/name/${name}?fields=name,capital,population,flags,languages`;
     fetch(BASE_URL)
-    .then(data => {
+    .then(response => {
 
-            if(!data.ok) {
+            if(!response.ok) {
             resertCountrysList();
             resertCountrysInfo();
             Notify.failure('Oops, there is no country with that name');
             throw new Error('Invalid country name');
         };
 
-        return data.json();
+        return response.json();
     })
     .then(contryDatas => {
 
@@ -43,11 +47,9 @@ const removeClassForStyle = nameClass => refs.countrysList.classList.remove(name
 
 
 function makeMarkupCountries(arr) {
-    const markupCountrys = arr.map(({ name: { official }, flags: { svg } } ) =>
-        `<li>
-        <img src="${svg}" alt="${official}" width="100px" height="60px">
-        <h2>${official}</h2>
-            </li>`);
+    const markupCountrys = arr.map(countryObject => {
+    markupCountryName(countryObject);
+});
 
             addMarkupList(markupCountrys);
             removeClassForStyle('country');
@@ -55,12 +57,9 @@ function makeMarkupCountries(arr) {
 };
 
 function makeMarkupCountryInfo(arr) {
-    const markupCountry = arr.map(({ capital, languages, population } ) =>
-        `
-        <p>Capital: <span>${capital}</span></p>
-        <p>Population: <span>${population}</span></p>
-        <p>Languages: <span>${Object.values(languages)}</span></p>
-        `);
+    const markupCountry = arr.map(countryObject => {
+        markupCountryInfo(countryObject);
+});
 
             addMarkupInfo(markupCountry);
             removeClassForStyle('countries');
