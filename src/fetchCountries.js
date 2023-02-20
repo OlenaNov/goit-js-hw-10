@@ -1,7 +1,7 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import refs from './refs';
-import markupCountryName from './templates/country-card.hbs';
-import markupCountryInfo from './templates/country-info.hbs';
+// import markupCountryName from './templates/country-card.hbs';
+// import markupCountryInfo from './templates/country-info.hbs';
 
 
 function fetchCountries(name) {
@@ -47,19 +47,25 @@ const removeClassForStyle = nameClass => refs.countrysList.classList.remove(name
 
 
 function makeMarkupCountries(arr) {
-    const markupCountrys = arr.map(countryObject => {
-    markupCountryName(countryObject);
-});
+    const markupCountrys = arr.map(({ name: { official }, flags: { svg } } ) =>
+        `<li>
+        <img src="${svg}" alt="${official}" width="100px" height="60px">
+        <h2>${official}</h2>
+            </li>`);
 
             addMarkupList(markupCountrys);
             removeClassForStyle('country');
             addClassForStyle('countries');
 };
 
+
 function makeMarkupCountryInfo(arr) {
-    const markupCountry = arr.map(countryObject => {
-        markupCountryInfo(countryObject);
-});
+    const markupCountry = arr.map(({ capital, languages, population } ) =>
+        `
+        <p>Capital: <span>${capital}</span></p>
+        <p>Population: <span>${population}</span></p>
+        <p>Languages: <span>${Object.values(languages)}</span></p>
+        `);
 
             addMarkupInfo(markupCountry);
             removeClassForStyle('countries');
