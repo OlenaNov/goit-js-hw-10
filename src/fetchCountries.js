@@ -1,22 +1,20 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import refs from './refs';
-// import markupCountryName from './templates/country-card.hbs';
-// import markupCountryInfo from './templates/country-info.hbs';
 
 
 function fetchCountries(name) {
     const BASE_URL = `https://restcountries.com/v3.1/name/${name}?fields=name,capital,population,flags,languages`;
     fetch(BASE_URL)
-    .then(response => {
-
-            if(!response.ok) {
+    .then(data => {
+        
+            if(!data.ok) {
             resertCountrysList();
             resertCountrysInfo();
             Notify.failure('Oops, there is no country with that name');
             throw new Error('Invalid country name');
         };
 
-        return response.json();
+        return data.json();
     })
     .then(contryDatas => {
 
