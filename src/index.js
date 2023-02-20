@@ -14,8 +14,9 @@ function onInputSearchBox(e) {
     let nameCountryInput = e.target.value.trim();
 
     if(!nameCountryInput) {
-        resertCountrysList();
-        resertCountrysInfo();
+        resertCountrysMarkup(refs.countrysList);
+        resertCountrysMarkup(refs.countryInfo);
+
         return;
     };
 
@@ -24,9 +25,10 @@ function onInputSearchBox(e) {
 
 function controlValidResponse(data) {
 
-    if(!data.ok) {
-    resertCountrysList();
-    resertCountrysInfo();
+if(!data.ok) {
+    resertCountrysMarkup(refs.countrysList);
+    resertCountrysMarkup(refs.countryInfo);
+
     Notify.failure('Oops, there is no country with that name');
     throw new Error('Invalid country name');
 };
@@ -37,14 +39,15 @@ return data.json();
 function createMarkupPage(contryDatas) {
 
     if(contryDatas.length > 10) {
-        resertCountrysList();
-        resertCountrysInfo();
+        resertCountrysMarkup(refs.countrysList);
+        resertCountrysMarkup(refs.countryInfo);
+
         Notify.info('Too many matches found. Please enter a more specific name.');
         return;
     };
 
     makeMarkupCountries(contryDatas);
-    resertCountrysInfo();
+    resertCountrysMarkup(refs.countryInfo);
 
     if(contryDatas.length === 1) {
         makeMarkupCountryInfo(contryDatas);
@@ -52,16 +55,15 @@ function createMarkupPage(contryDatas) {
 };
 
 function makeError(err) {
-console.log(err);
+    console.log(err);
 };
 
-const resertCountrysList = () => refs.countrysList.innerHTML = '';
-const resertCountrysInfo = () => refs.countryInfo.innerHTML = '';
-const addMarkupList = (markup) => refs.countrysList.innerHTML = markup.join('');
-const addMarkupInfo = (markup) => refs.countryInfo.innerHTML = markup.join('');
-const addClassForStyle = nameClass => refs.countrysList.classList.add(nameClass);
-const removeClassForStyle = nameClass => refs.countrysList.classList.remove(nameClass);
-
+const resertCountrysMarkup = (elementMarkup) => elementMarkup.innerHTML = '';
+const addMarkup = (element, markup) => element.innerHTML = markup.join('');
+const changeClassForStyle = (newClass, oldClass) => {
+    refs.countrysList.classList.add(newClass);
+    refs.countrysList.classList.remove(oldClass);
+};
 
 function makeMarkupCountries(arr) {
     const markupCountrys = arr.map(({ name: { official }, flags: { svg } } ) =>
@@ -70,9 +72,8 @@ function makeMarkupCountries(arr) {
         <h2>${official}</h2>
             </li>`);
 
-            addMarkupList(markupCountrys);
-            removeClassForStyle('country');
-            addClassForStyle('countries');
+    addMarkup(refs.countrysList, markupCountrys);
+    changeClassForStyle('countries', 'country');
 };
 
 
@@ -84,9 +85,8 @@ function makeMarkupCountryInfo(arr) {
         <p>Languages: <span>${Object.values(languages)}</span></p>
         `);
 
-            addMarkupInfo(markupCountry);
-            removeClassForStyle('countries');
-            addClassForStyle('country');
+    addMarkup(refs.countryInfo, markupCountry);
+    changeClassForStyle('country', 'countries');
 };
 
 
