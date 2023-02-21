@@ -82,7 +82,7 @@ function makeMarkupCountryInfo(arr) {
         `
         <p>Capital: <span>${capital}</span></p>
         <p>Population: <span>${population}</span></p>
-        <p>Languages: <span>${Object.values(languages)}</span></p>
+        <p>Languages: <span>${Object.values(languages).join(', ')}</span></p>
         `);
 
     addMarkup(refs.countryInfo, markupCountry);
